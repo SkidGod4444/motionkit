@@ -1,0 +1,7 @@
+{
+  "name": "motionkit",
+  "version": "0.1.0",
+  "description": "Make motion-graphics films in code: copy the motion of a reference video with your own words and art, or build a film cut to a beat from 44 moves with a synthesised soundtrack.",
+  "license": "MIT",
+  "keywords": ["motion", "video", "animation", "canvas", "launch-video"]
+}

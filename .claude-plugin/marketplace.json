@@ -1,0 +1,11 @@
+{
+  "name": "motionkit",
+  "owner": { "name": "OpenHorizon Labs" },
+  "plugins": [
+    {
+      "name": "motionkit",
+      "source": "./",
+      "description": "Make motion-graphics films in code: copy the motion of a reference video with your own words and art, or build a film cut to a beat from 44 moves with a synthesised soundtrack."
+    }
+  ]
+}

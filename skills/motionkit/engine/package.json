@@ -1,0 +1,15 @@
+{
+  "name": "motionkit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "sh setup.sh",
+    "film": "bun build.ts",
+    "new": "bun new.ts",
+    "ref": "bun ref.ts",
+    "index": "bun index.ts"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.17.0"
+  }
+}
