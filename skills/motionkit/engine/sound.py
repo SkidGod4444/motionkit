@@ -209,6 +209,7 @@ def check():
     hit = [t for t in want if any(abs(o - t - 0.005) <= tol for o in on)]
     known = sorted(ev["t"] for ev in events if ev["kind"] in BASSY)  # a stray is a bass jump with no bass-carrying sound scheduled near it
     stray = [o for o in on if not any(-0.02 <= o - t <= 0.15 for t in known)]
+    if FXONLY: stray = []  # with no music the loudest bass is a click, so every small sound would count as a jump
     print(f"bass hits found on time: {len(hit)} of {len(want)}   bass jumps with no scheduled hit: {len(stray)}")
     if "--debug" in sys.argv:
         for t in want: print(f"   want {t:.3f} nearest {min((o - t for o in on), key=abs):+.3f} {[ev['kind'] for ev in events if abs(ev['t'] - t) < 0.002]}")
