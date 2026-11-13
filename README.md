@@ -2,12 +2,18 @@
 
 Make motion-graphics films in code, with a coding agent doing the work. Point it at a video whose motion you like and it rebuilds the timing and movement with **your own words and art**, or it builds a new film cut to a beat from 44 ready-made moves. The soundtrack is synthesised to match, so every film comes out with sound.
 
+[![The motionkit launch film: a wall of moves playing live](media/launch.jpg)](media/launch.mp4)
+
+**[Watch the 30 second launch film](media/launch.mp4)**. It was made with motionkit, from a prompt, and cut to a real song.
+
 It is an agent skill with its engine inside it: install the skill, and the agent checks your machine, installs what is missing (after asking you), and makes films in whatever folder you are working in.
 
 ## What you get
 
 - **44 moves**: type reveals, transitions, camera moves, charts, finish passes. One line declares a move and gives its picture, its sound and a reading-time check.
 - **A soundtrack engine**: drums, bass, pad and risers on a beat grid, a sound for every move, mixed to -16 LUFS. Everything is synthesised; there are no samples.
+- **Stage pieces for product films**: glass panels, a moving camera, planes that lean away with depth of field, a wall of live clips, a terminal, code and a waveform, so a film can show the product and not only headlines.
+- **Cut to a real song**: `beats.py` finds a track's beat, the film is written in beats, and the build mixes the music in and checks every cut against it.
 - **Overlays for a video editor**: see-through animated titles (ProRes 4444 with alpha) with move sounds only, and steps for placing them on an [EditMax](https://github.com/SkidGod4444/editmax) timeline through its MCP tools without moving the cut.
 - **Reference intake**: turns any clip into numbered frames, a cut list and a starter film.
 - **Checks that need no eyes or ears**: sound lands on the beat, picture and bass land on the same frame, on-screen text stays up long enough to read.
@@ -51,6 +57,7 @@ On first use the agent runs the setup check. The engine needs [bun](https://bun.
 | `bun $E/ref.ts <file or url> --name <name>` | intake of a reference clip into `ref/<name>/` |
 | `python3 $E/compare.py sheet.jpg 10 40 --ref ref/<name> --out out-<name>` | reference and render side by side |
 | `python3 $E/check.py <name>` | brightness of every frame against the reference |
+| `uv run $E/beats.py <song> --from 7.5 --len 30 --out beats.json` | find a song's beat and write the beat table a film cuts on |
 | `bun $E/pure.ts <name>` | confirm frames render the same alone and after other frames |
 
 A film is one script whose `renderFrame(f)` draws frame `f`; `hello.js` is the model. For your own brand, call `MOVES.setBrand({ ... })` on the first line and put your art in `assets/`. Add `out-*/` and `ref/` to your `.gitignore`.
@@ -71,6 +78,10 @@ The last column of the move table names the public technique or component demo e
 - The automatic clone check compares brightness only; shape and movement are judged by eye on side-by-side sheets.
 - Films can place still images, not video.
 - The EditMax placement steps are written from EditMax's tool definitions and have not yet been run against the app.
+
+## Credits
+
+The launch film's music is "EDM Detection Mode" by Kevin MacLeod (incompetech.com), licensed under Creative Commons: By Attribution 4.0. The terminal in the film is a plain drawing of a Claude Code session; motionkit is an independent project and is not made or endorsed by Anthropic.
 
 ## Licence
 

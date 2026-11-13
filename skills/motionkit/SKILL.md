@@ -34,7 +34,7 @@ const K = { line: M.clip("words", G.bar(1) + 2, 10, { text: "Copy the motion.", 
 window.timeline = () => ({ fps: 30, total: TOTAL, bpm: G.bpm, sections: [[0, "intro"], [4, "build"], [8, "drop"], [24, "outro"]], cues: M.cues(), captions: M.captions() });
 ```
 
-Start a film with `bun $E/new.ts <name>`: it writes `<name>.html` and `<name>.js` in the work folder, copied from the hello example. Rewrite the clips, scenes and copy. `bun $E/build.ts <name>` then does, in order: timeline, soundtrack (`sound.py`), sound check, reading-time check (`lint.py`), render, join, sync check (`sync.py`), and writes `out-<name>/<name>.mp4`. A timeline without `bpm` gets a simpler soundtrack from `audio.py` (cuts only). Timeline switches: `sound: "fx"` (move sounds only, no music), `sound: "none"`, `alpha: true` (see-through background, `.mov` output; see the EditMax section).
+For a launch or product film read "Launch and product films" below first. Start a film with `bun $E/new.ts <name>`: it writes `<name>.html` and `<name>.js` in the work folder, copied from the hello example. Rewrite the clips, scenes and copy. `bun $E/build.ts <name>` then does, in order: timeline, soundtrack (`sound.py`), sound check, reading-time check (`lint.py`), render, join, sync check (`sync.py`), and writes `out-<name>/<name>.mp4`. A timeline without `bpm` gets a simpler soundtrack from `audio.py` (cuts only). Timeline switches: `sound: "fx"` (move sounds only, no music), `sound: "none"`, `alpha: true` (see-through background, `.mov` output; see the EditMax section).
 
 ## Anatomy of a film script
 
@@ -51,6 +51,36 @@ Start a film with `bun $E/new.ts <name>`: it writes `<name>.html` and `<name>.js
 - **Length**: reading time sets the minimum: a 3-word line needs about 1.3 s after it has appeared, so one line per bar at 120 bpm. The soundtrack runs about half a second past the last frame and is cut there; end on an `outro` section so the cut falls in its tail.
 - **Build results**: `build.ts` exits 0 even when a check fails; failures print as `WARNING:` lines with the detail above them. Treat every warning as a failure: read the output (filter out the `frame n/total` progress lines), fix, rebuild until there are none. Stills are written as `out-<name>/fNNNN.jpg`; read them. `bun $E/pure.ts <name>` confirms frames render the same alone and after other frames.
 - `sound.py` needs numpy and is always run through `uv run`; the other Python scripts use only the standard library.
+
+## Launch and product films: show the product
+
+A film of big words on a background reads as basic. Launch films that work keep the product on screen in one visual world with depth and a slowly moving camera, use small brief text, and hold shots for 2 to 6 seconds (a few bars), not one cut a beat. For a launch or product film do NOT start from `hello`:
+
+1. **Decide the look first**: one background world, one accent colour, one type family. Say it to the user in two lines.
+2. **Storyboard 6 to 8 shots** of real things: the product's real screen or output, real commands, real code, real results. Never draw an interface the product does not have, never invent numbers, and never use another company's logo. Captions are small labels (`txt`, mono, bottom left), not headlines.
+3. **Build one hero shot first**, render stills, and compare it with a real launch film before building the rest.
+
+The page must load `stage.js` after `moves.js` (pages made by `new.ts` do). Start `renderFrame` with `M.frame(); M.reset(X);`. Stage pieces (all on `MOVES`):
+
+| piece | what it is |
+|---|---|
+| `backdrop(ctx, f, { base, lights[], streak })` | near-black with slow pools of light: the world everything sits in |
+| `glass(ctx, x, y, w, h, { r, top, bottom, rim, shadow })` | a dark rounded panel with a rim of light and a soft shadow |
+| `camera(ctx, cam, draw)` with `cam(a, b, t, ease)` | look at a point of a bigger scene: `{ x, y, zoom, rot }`; start macro-close and pull back, or drift slowly |
+| `tilt(ctx, draw, { depth, focus, blur, fog, top, height, width, cx, roll })` | draws a full-frame scene as a plane leaning away, far edge smaller, darker and out of focus |
+| `tiles(ctx, f, { cells: [{ draw(ctx, t), label, bg, len, hold }], cols, x, y, w, gap })` | a grid of small screens each playing a move live (never put a transition inside a tile) |
+| `term(ctx, f, { x, y, size, lines: [{ text, at, speed, prompt, mark: "ok" or "run", color }] })` | terminal lines that type or appear on their frame |
+| `code(ctx, { lines[], x, y, size, lead, hot, shown })` | JavaScript with quiet syntax colour and one lit line |
+| `wave(ctx, { peaks, x, y, w, h, played, beats[], blocks[] })` | a real soundtrack's shape with a playhead, beat ticks and clips on a lane |
+
+Stage pieces make no sound of their own: add cues by hand to the timeline, `{ f, kind, gain }` with kinds such as `type`, `tick`, `pop`, `ding`.
+
+## Cut to a real song
+
+1. The user supplies the music file and must have the right to use it; say that, and put the credit a licence asks for on the end card. Never rip a song from a streaming site.
+2. `uv run $E/beats.py <file>` prints the tempo and how loud each bar is. Pick an excerpt that starts on a bar with a section change a few bars in, then `uv run $E/beats.py <file> --from <seconds> --len <seconds> --out beats.json` writes `beats.json` and `beats.js`.
+3. Load `beats.js` in the page before the film script. Write every scene start as a beat number: `const b = (n) => window.BEATS.frames[n]`. Cut on bars (every 4 beats), where the track changes.
+4. In the timeline set `music: { file, from }`, `sound: "fx"` (the moves' own sounds stay, quietly, under the music) or `"none"`, a `bpm`, and `sync: [frames of the real cuts]`. The build mixes the track in at -16 LUFS, fades its end, and checks that each cut has a bass hit within a frame. Do not add flashes just to pass that check.
 
 ## Motions for EditMax (a clip on a video editor's timeline)
 
